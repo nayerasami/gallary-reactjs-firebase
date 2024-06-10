@@ -2,115 +2,112 @@ import React from "react";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
-import ListSubheader from "@mui/material/ListSubheader";
 import IconButton from "@mui/material/IconButton";
 import StarIcon from "@mui/icons-material/Star";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    count,
+    favoriteList,
+    removeFromFavoriteList,
+} from "../../pages/store/reducers/photosSlice";
+import { useNavigate } from "react-router-dom";
+import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
+import { Container, Typography } from "@mui/material";
 
 const FavoriteList = () => {
+    const favoritesList = useSelector(favoriteList);
+    const favoritesCount = useSelector(count);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleRemoveFromFavorite = (photo) => {
+        dispatch(removeFromFavoriteList(photo.id));
+    };
+
     return (
-        <ImageList
-            sx={{
-                width: "100%",
-                height: "auto",
-                padding: 2,
-                boxSizing: "border-box",
-                transform: "translateZ(0)",
-                gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-                gridAutoRows: "300px",
-            }}
-            gap={10}
-        >
-            {/* <ImageListItem key="Subheader" cols={3} sx={{ height: "auto" }}>
-                <ListSubheader component="p">December</ListSubheader>
-            </ImageListItem> */}
-            {itemData.map((item) => (
-                <ImageListItem key={item.img} sx={{ height: 300 }}>
-                    <img
-                        srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                        src={`${item.img}?w=248&fit=crop&auto=format`}
-                        alt={item.title}
-                        loading="lazy"
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                    <ImageListItemBar
-                        title={item.title}
-                        subtitle={item.author}
-                        actionIcon={
-                            <IconButton
-                                sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                                aria-label={`info about ${item.title}`}
-                            >
-                                <StarIcon />
-                            </IconButton>
-                        }
-                    />
-                </ImageListItem>
-            ))}
-        </ImageList>
+        <>
+            {favoritesCount > 0 ? (
+                <>
+                    <Container sx={{ textAlign: 'center' }}>
+                        <Typography variant='h2' sx={{
+                            fontFamily: "monospace",
+                            fontWeight: 700,
+                            letterSpacing: ".2rem",
+                            textDecoration: "none"
+                        }} >Favorites</Typography>
+                        <Typography gutterBottom sx={{ textAlign: 'center', margin: 'auto', width: 600 }}>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Id ex expedita nemo non repellat facere consequatur ea? Iure, iusto commodi?</Typography>
+                    </Container>
+                    <ImageList
+                        sx={{
+                            width: "100%",
+                            height: "auto",
+                            padding: 2,
+                            boxSizing: "border-box",
+                            transform: "translateZ(0)",
+                            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+                            gridAutoRows: "300px",
+                        }}
+                        gap={10}
+                    >
+                        {favoritesList.map((item) => (
+                            <ImageListItem key={item.id} sx={{ height: 300 }}>
+                                <img
+                                    srcSet={`${item.src.original}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                                    src={`${item.src.original}?w=248&fit=crop&auto=format`}
+                                    alt={item.photographer}
+                                    loading="lazy"
+                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                />
+                                <ImageListItemBar
+                                    title={item.photographer}
+                                    actionIcon={
+                                        <IconButton
+                                            sx={{ color: "white" }}
+                                            aria-label={`star ${item.title}`}
+                                            onClick={() => handleRemoveFromFavorite(item)}
+                                        >
+                                            <StarIcon />
+                                        </IconButton>
+                                    }
+                                />
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </>
+            ) : (
+                <Container>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            textAlign: "center",
+                            alignItems: "center",
+                            my: 5,
+                        }}
+                    >
+                        <Box sx={{ ml: 2 }}>
+                            <Typography variant="h2" component="div" sx={{
+                                fontFamily: "monospace",
+                                fontWeight: 700,
+                                textDecoration: "none"
+                            }}>
+                                No Favorites
+                            </Typography>
+                            <Typography variant="body2" component="div">
+                                You haven't added any favorites yet.
+                            </Typography>
+                            <img
+                                alt="No Favorites"
+                                src="/public/assets/favorite.png"
+                                style={{ width: "50%" }}
+                            />
+                        </Box>
+                    </Box>
+                </Container >
+            )}
+        </>
     );
 };
-
-const itemData = [
-    {
-        img: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
-        title: "Breakfast",
-        author: "@bkristastucchio",
-    },
-    {
-        img: "https://images.unsplash.com/photo-1551782450-a2132b4ba21d",
-        title: "Burger",
-        author: "@rollelflex_graphy726",
-    },
-    {
-        img: "https://images.unsplash.com/photo-1522770179533-24471fcdba45",
-        title: "Camera",
-        author: "@helloimnik",
-    },
-    {
-        img: "https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c",
-        title: "Coffee",
-        author: "@nolanissac",
-    },
-    {
-        img: "https://images.unsplash.com/photo-1533827432537-70133748f5c8",
-        title: "Hats",
-        author: "@hjrc33",
-    },
-    {
-        img: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62",
-        title: "Honey",
-        author: "@arwinneil",
-    },
-    {
-        img: "https://images.unsplash.com/photo-1516802273409-68526ee1bdd6",
-        title: "Basketball",
-        author: "@tjdragotta",
-    },
-    {
-        img: "https://images.unsplash.com/photo-1518756131217-31eb79b20e8f",
-        title: "Fern",
-        author: "@katie_wasserman",
-    },
-    {
-        img: "https://images.unsplash.com/photo-1597645587822-e99fa5d45d25",
-        title: "Mushrooms",
-        author: "@silverdalex",
-    },
-    {
-        img: "https://images.unsplash.com/photo-1567306301408-9b74779a11af",
-        title: "Tomato basil",
-        author: "@shelleypauls",
-    },
-    {
-        img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1",
-        title: "Sea star",
-        author: "@peterlaster",
-    },
-    {
-        img: "https://images.unsplash.com/photo-1589118949245-7d38baf380d6",
-        title: "Bike",
-        author: "@southside_customs",
-    },
-];
 
 export default FavoriteList;

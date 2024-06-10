@@ -5,6 +5,8 @@ import { axiosInstance } from "../../apis/config";
 import PaginationEL from "../Pagination";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Box } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { count, favoriteList, addToFavoriteList, removeFromFavoriteList } from "../../pages/store/reducers/photosSlice";
 
 export default function Photos() {
     const [photosList, setPhotosList] = React.useState([]);
@@ -12,6 +14,24 @@ export default function Photos() {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [loading, setLoading] = React.useState(false);
     const photosPerPage = 51;
+    const favoritesList = useSelector(favoriteList);
+    const countNumber = useSelector(count);
+    const dispatch = useDispatch();
+
+    console.log("favoritesList", favoritesList);
+    console.log("countNumber", countNumber);
+
+    const handleAddToFav = (photo) => {
+        if (favoritesList.some(fav => fav.id === photo.id)) {
+            dispatch(removeFromFavoriteList(photo.id));
+        } else {
+            dispatch(addToFavoriteList(photo));
+        }
+    };
+
+    const isFavorite = (photo) => {
+        return favoritesList.some(fav => fav.id === photo.id);
+    };
 
     const getPhotos = async (query, page, per_page = photosPerPage) => {
         setLoading(true);
@@ -56,15 +76,22 @@ export default function Photos() {
                     const rows = 2;
 
                     return (
-                        <PhotosCard key={index} item={item} cols={cols} rows={rows} />
+                        <PhotosCard
+                            key={index}
+                            item={item}
+                            cols={cols}
+                            rows={rows}
+                            onFavoriteClick={handleAddToFav}
+                            isFavorite={isFavorite(item)}
+                        />
                     );
                 })}
             </ImageList>
             {loading && 
-           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-           <CircularProgress />
-       </Box>
-       }
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                    <CircularProgress />
+                </Box>
+            }
             <PaginationEL count={totalPagesNumber} page={currentPage} onPageChange={handlePageChange} />
         </>
     );

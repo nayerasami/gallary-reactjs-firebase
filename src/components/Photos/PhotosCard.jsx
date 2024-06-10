@@ -3,6 +3,7 @@ import ImageListItem from "@mui/material/ImageListItem";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
 import IconButton from "@mui/material/IconButton";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarIcon from "@mui/icons-material/Star";
 
 function srcset(image, width, height, rows = 1, cols = 1) {
     return {
@@ -11,9 +12,9 @@ function srcset(image, width, height, rows = 1, cols = 1) {
     };
 }
 
-const PhotosCard = ({ item, cols, rows }) => {
+const PhotosCard = ({ item, cols, rows, onFavoriteClick, isFavorite }) => {
     return (
-        <ImageListItem  cols={cols} rows={rows}>
+        <ImageListItem cols={cols} rows={rows}>
             <img
                 {...srcset(item.src.original, 250, 200, rows, cols)}
                 alt={item.title}
@@ -30,14 +31,15 @@ const PhotosCard = ({ item, cols, rows }) => {
                     <IconButton
                         sx={{ color: "white" }}
                         aria-label={`star ${item.title}`}
+                        onClick={() => onFavoriteClick(item)}
                     >
-                        <StarBorderIcon />
+                        {isFavorite ? <StarIcon /> : <StarBorderIcon />}
                     </IconButton>
                 }
                 actionPosition="left"
             />
         </ImageListItem>
-    )
+    );
 }
 
 export default PhotosCard;

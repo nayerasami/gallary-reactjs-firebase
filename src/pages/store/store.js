@@ -5,6 +5,6 @@ import photosSlice from './reducers/photosSlice';
 export default configureStore({
   reducer: {
     user: userReducer,
-    photos:photosSlice
+    photo:photosSlice
   },
 });
