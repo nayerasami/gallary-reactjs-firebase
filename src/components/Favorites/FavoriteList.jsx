@@ -5,29 +5,34 @@ import ImageListItemBar from "@mui/material/ImageListItemBar";
 import IconButton from "@mui/material/IconButton";
 import StarIcon from "@mui/icons-material/Star";
 import { useDispatch, useSelector } from "react-redux";
+import { removeFromFavoritesApi } from '../../apis/auth'; // Import Firebase functions
+
 import {
     count,
     favoriteList,
     removeFromFavoriteList,
 } from "../../pages/store/reducers/photosSlice";
-import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
-import { Container, Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { selectToken } from "../../pages/store/reducers/userSlice";
 
 const FavoriteList = () => {
+    const userToken = useSelector(selectToken);
+    console.log("useer token from favorite", userToken)
+
     const favoritesList = useSelector(favoriteList);
     const favoritesCount = useSelector(count);
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const handleRemoveFromFavorite = (photo) => {
         dispatch(removeFromFavoriteList(photo.id));
+        removeFromFavoritesApi(photo.id)
     };
 
     return (
         <>
-            {favoritesCount > 0 ? (
+            {favoritesCount > 0 && userToken ? (
                 <>
                     <Container sx={{ textAlign: 'center' }}>
                         <Typography variant='h2' sx={{

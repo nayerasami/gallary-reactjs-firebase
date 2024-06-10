@@ -7,6 +7,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { count, favoriteList, addToFavoriteList, removeFromFavoriteList } from "../../pages/store/reducers/photosSlice";
+import { addToFavoritesApi, removeFromFavoritesApi } from '../../apis/auth'; // Import Firebase functions
+import { selectToken } from "../../pages/store/reducers/userSlice";
+import { jwtDecode } from "jwt-decode";
 
 export default function Photos() {
     const [photosList, setPhotosList] = React.useState([]);
@@ -14,6 +17,13 @@ export default function Photos() {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [loading, setLoading] = React.useState(false);
     const photosPerPage = 51;
+    const userToken = useSelector(selectToken);
+    console.log("userToken from photos", userToken)
+    const decodedUserData = userToken ? jwtDecode(userToken) : "";
+    console.log("decodedUserData", decodedUserData)
+    const userID = decodedUserData.user_id
+    console.log(userID)
+
     const favoritesList = useSelector(favoriteList);
     const countNumber = useSelector(count);
     const dispatch = useDispatch();
@@ -24,8 +34,10 @@ export default function Photos() {
     const handleAddToFav = (photo) => {
         if (favoritesList.some(fav => fav.id === photo.id)) {
             dispatch(removeFromFavoriteList(photo.id));
+            removeFromFavoritesApi(userID, photo.id)
         } else {
             dispatch(addToFavoriteList(photo));
+            addToFavoritesApi(userID, photo.id)
         }
     };
 
@@ -87,8 +99,8 @@ export default function Photos() {
                     );
                 })}
             </ImageList>
-            {loading && 
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            {loading &&
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <CircularProgress />
                 </Box>
             }
